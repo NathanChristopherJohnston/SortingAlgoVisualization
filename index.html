@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithms Demo</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        h1 { color: #2c3e50; }
+        pre { background: #f4f4f4; padding: 1em; border-radius: 5px; }
+        .output { margin-top: 1em; }
+        button { margin: 0.5em 0; }
+    </style>
+</head>
+<body>
+    <h1>Sorting Algorithms Demo</h1>
+    <button onclick="runBubbleSort()">Run Bubble Sort</button>
+    <button onclick="runQuickSort()">Run Quick Sort</button>
+    <div class="output" id="output"></div>
+    <svg id="chart" width="600" height="200"></svg>
+    <script src="sortting.js"></script>
+    <script>
+        function drawChart(data, color = '#3498db') {
+            const svg = d3.select('#chart');
+            svg.selectAll('*').remove();
+            const width = +svg.attr('width');
+            const height = +svg.attr('height');
+            const barWidth = width / data.length;
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(data)])
+                .range([0, height - 20]);
+            svg.selectAll('rect')
+                .data(data)
+                .enter()
+                .append('rect')
+                .attr('x', (d, i) => i * barWidth)
+                .attr('y', d => height - yScale(d))
+                .attr('width', barWidth - 4)
+                .attr('height', d => yScale(d))
+                .attr('fill', color);
+            svg.selectAll('text')
+                .data(data)
+                .enter()
+                .append('text')
+                .attr('x', (d, i) => i * barWidth + barWidth / 2)
+                .attr('y', d => height - yScale(d) - 5)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .text(d => d);
+        }
+
+        function runBubbleSort() {
+            if (typeof bubbleSort !== 'function') {
+                document.getElementById('output').innerText = 'Bubble Sort function not found.';
+                return;
+            }
+            let arr = Array.from({length: 10}, () => Math.floor(Math.random() * 100));
+            let sorted = bubbleSort([...arr]);
+            document.getElementById('output').innerHTML =
+                '<b>Bubble Sort</b><br>Original: ' + arr.join(', ') +
+                '<br>Sorted: ' + sorted.join(', ');
+            drawChart(sorted, '#3498db');
+        }
+        function runQuickSort() {
+            if (typeof quickSort !== 'function') {
+                document.getElementById('output').innerText = 'Quick Sort function not found.';
+                return;
+            }
+            let arr = Array.from({length: 10}, () => Math.floor(Math.random() * 100));
+            let sorted = quickSort([...arr]);
+            document.getElementById('output').innerHTML =
+                '<b>Quick Sort</b><br>Original: ' + arr.join(', ') +
+                '<br>Sorted: ' + sorted.join(', ');
+            drawChart(sorted, '#e67e22');
+        }
+    </script>
+</body>
+</html>
